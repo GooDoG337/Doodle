@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+c8263db34e86063da15619428d192d0d CMakeFiles/Doodle_autogen
+c8263db34e86063da15619428d192d0d CMakeFiles/Doodle_autogen_timestamp_deps
+50ce6b6f7096ca3229362b361f72fe03 Doodle_autogen/timestamp

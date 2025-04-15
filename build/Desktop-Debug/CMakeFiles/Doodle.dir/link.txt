@@ -1,0 +1,1 @@
+/usr/bin/clang++-18 -DQT_QML_DEBUG -g CMakeFiles/Doodle.dir/Doodle_autogen/mocs_compilation.cpp.o CMakeFiles/Doodle.dir/main.cpp.o CMakeFiles/Doodle.dir/mainwindow.cpp.o -o Doodle  /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.15.13 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.15.13 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.13 
