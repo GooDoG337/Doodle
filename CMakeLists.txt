@@ -14,9 +14,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -38,6 +38,7 @@ else()
     else()
         add_executable(Doodle
             ${PROJECT_SOURCES}
+            include/gameplay/gameplay.h include/gameplay/gameplay.cpp
         )
     endif()
 endif()
