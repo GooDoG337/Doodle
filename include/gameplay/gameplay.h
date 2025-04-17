@@ -10,18 +10,25 @@ protected:
         switch(event->key())
         {
             case 16777220:
+            case Qt::Key_Enter: //На моём компе не работает
                 Animate();
                 break;
-            case 16777236:
-                anim->setEndValue(QPoint(doodle->x()+50, 0));
-                doodle->setGeometry(doodle->x()+50,doodle->y(),120,75);
+            case Qt::Key_Right:
+                if(anim->state() == QPropertyAnimation::Stopped)
+                {
+                    doodle->setGeometry(doodle->x()+25,doodle->y(),120,75);
+                } else {
+                    anim->setEndValue(QPoint(doodle->x()+25, 0));
+                }
                 break;
-            case 16777234:
-                anim->setEndValue(QPoint(doodle->x()-50, 0));
-                doodle->setGeometry(doodle->x()-50,doodle->y(),120,75);
+            case Qt::Key_Left:
+                if(anim->state() == QPropertyAnimation::Stopped)
+                {
+                    doodle->setGeometry(doodle->x()-25,doodle->y(),120,75);
+                } else {
+                    anim->setEndValue(QPoint(doodle->x()-25, 0));
+                }
                 break;
-            default:
-                QWidget::keyPressEvent(event);
         }
     }
 public:
