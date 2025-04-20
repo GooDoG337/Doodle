@@ -39,6 +39,11 @@ else()
         add_executable(Doodle
             ${PROJECT_SOURCES}
             include/gameplay/gameplay.h include/gameplay/gameplay.cpp
+            include/platform/platform.h include/platform/platform.cpp
+            include/doodle/doodle.h include/doodle/doodle.cpp
+            include/background/background.h include/background/background.cpp
+            include/logic/gamelogic.h include/logic/gamelogic.cpp
+
         )
     endif()
 endif()
