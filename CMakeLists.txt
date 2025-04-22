@@ -43,6 +43,8 @@ else()
             include/doodle/doodle.h include/doodle/doodle.cpp
             include/background/background.h include/background/background.cpp
             include/logic/gamelogic.h include/logic/gamelogic.cpp
+            include/score/jumpscore.h
+            include/score/jumpscore.cpp
 
         )
     endif()

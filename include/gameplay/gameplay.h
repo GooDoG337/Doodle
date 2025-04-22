@@ -6,6 +6,7 @@
 #include <QPropertyAnimation>
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
+#include "../score/jumpscore.h"
 #include <QList>
 class Gameplay : public QGraphicsView {
     Q_OBJECT

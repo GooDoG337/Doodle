@@ -6,7 +6,11 @@
 #include "../platform/platform.h"
 #include "../background/background.h"
 #include "../doodle/doodle.h"
- #include <QRandomGenerator>
+#include "../score/jumpscore.h"
+#include <QRandomGenerator>
+
+
+
 Gameplay::Gameplay(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(this)), doodle(nullptr), sceneWidth(512), sceneHeight(512) {
     // Установка размеров окна
@@ -27,12 +31,14 @@ Gameplay::Gameplay(QWidget* parent)
 }
 
 void Gameplay::checkCollison() {
+    int score = 0;
     for (Platform* platform : platforms) {
         QRect doodleRect(doodle->x(), doodle->y(), doodle->pixmap().width(), doodle->pixmap().height());  // Bottom part of the doodle
         QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), doodle->pixmap().height());
         if (doodleRect.intersects(platformRect) && doodle->verticalVelocity < 0) {
             doodle->isJumping = true;
             doodle->verticalVelocity = doodle->jumpForce;
+            score++;
             break;
         }
     }
