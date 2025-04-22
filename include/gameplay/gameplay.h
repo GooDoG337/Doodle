@@ -18,16 +18,22 @@ protected:
 private slots:
     void updateDoodlePosition();
     void onJumpFinished();
+    void newCreation();
 private:
     void checkCollison();
     QTimer* fpsTimer;
+    QTimer* colisionTimer;
     bool higher = false;
     QGraphicsScene* scene;
     Doodle* doodle;
     QList<Platform*> platforms;
     int sceneWidth;
     int sceneHeight;
-    void spawnPlatforms();
+    Score* jumpscore;
+    int highet = 0;
+    void spawnPlatforms(int high, int num, bool stealth);
+    int spawnPlatformsReborn(int startHigh = 0);
 signals:
     void jumpFinished();
+    void newParty();
 };

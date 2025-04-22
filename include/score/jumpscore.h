@@ -1,19 +1,19 @@
 #pragma once
-#include "../gameplay/gameplay.h"
 #include <QMainWindow>
 #include <QLabel>
 #include <QWidget>
 
-class jumpScore : public QWidget {
+class Score : public QWidget {
     Q_OBJECT
-
 public:
-    jumpScore(QWidget *parent = nullptr);
-    ~jumpScore();
-
+    Score(QWidget *parent = nullptr);
+    void add();
+    ~Score();
+public slots:
+    void updateScoreLabel();
+signals:
+    void scoreChanged();
 private:
     QLabel *scoreLabel;
-    int score;
-
-    void updateScoreLabel();
+    int jumpscore;
 };

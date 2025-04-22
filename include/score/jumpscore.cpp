@@ -1,20 +1,24 @@
 #include "jumpscore.h"
 
 
-jumpScore::jumpScore(QWidget* parent): QWidget(parent){
+Score::Score(QWidget* parent): QWidget(parent){
+    jumpscore = 0;
     scoreLabel = new QLabel(this);
     scoreLabel->setText("Score: 0");
     scoreLabel->setStyleSheet("font-size: 24px; color: white; background-color: rgba(0, 0, 0, 150); padding: 5px;");
     scoreLabel->setGeometry(10, 10, 150, 40);  // позиция и размер на экране
     scoreLabel->show();
-
+    connect(this, &Score::scoreChanged, this, &Score::updateScoreLabel);
     setFixedSize(400, 600);  // Размер окна игры
     setStyleSheet("background-color: #222;");
 }
 
-jumpScore::~jumpScore() {}
+Score::~Score() {}
 
-
-void jumpScore::updateScoreLabel(){
-    scoreLabel->setText("Score: " + QString::number(score));
+void Score::add() {
+    jumpscore++;
+    emit scoreChanged();
+}
+void Score::updateScoreLabel(){
+    scoreLabel->setText("Score: " + QString::number(jumpscore));
 }
