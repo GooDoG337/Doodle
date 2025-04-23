@@ -4,14 +4,17 @@
 #include <QGraphicsView>
 #include "../platform/platform.h"
 Platform::Platform(int x, int y, QGraphicsScene* scene) {
-    QPixmap pixmap("../../assets/platform.png");
-    if (pixmap.isNull()) {
-        qDebug() << "Failed to load pixmap";
-    } else {
-        setPixmap(pixmap);
+    image = new QPixmap("../../assets/platform.png");
+    if (!image->isNull()) {
+        setPixmap(*image);
         int initialX = x;
         int initialY = y;
         setPos(initialX, initialY);
     }
     scene->addItem(this);
+}
+
+Platform::~Platform() {
+    hide();
+
 }

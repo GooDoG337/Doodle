@@ -7,10 +7,8 @@
 #include "../background/background.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
+#include "../music/musicplayer.h"
 #include <QRandomGenerator>
-
-
-
 Gameplay::Gameplay(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(this)), doodle(nullptr), sceneWidth(512), sceneHeight(512) {
     // Установка размеров окна
@@ -18,6 +16,9 @@ Gameplay::Gameplay(QWidget* parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSceneRect(0, 0, sceneWidth, sceneHeight);
     Background bckgrnd(this);
+    musicLabel = new QLabel("Now Playing:", this);
+    musicLabel->setGeometry(16, 32, 480, 64);
+    musicLabel->hide();
     //Настраиваем фпс
     fpsTimer = new QTimer(this);
     colisionTimer = new QTimer(this);
@@ -29,21 +30,20 @@ Gameplay::Gameplay(QWidget* parent)
     colisionTimer->start(1);
     connect(this, &Gameplay::jumpFinished, this, &Gameplay::onJumpFinished);
     //Ебашим платформу
-    doodle = new Doodle(256,512-64, scene);
-    platforms.append(new Platform(256,512-32,scene));
-    QTextStream out(stdout);
-    out << spawnPlatformsReborn(spawnPlatformsReborn(height(),-height())) << '\n';
-
+    doodle = new Doodle(256,256, scene);
+    platforms.append(new Platform(256,256+32,scene));
+    spawnPlatformsReborn(spawnPlatformsReborn(height(),-height()));
+    musicplayer = new musicPlayer();
+    musicLabel->setText("Now playing:" + musicplayer->getFileName());
     setScene(scene);
 }
 
 void Gameplay::checkCollison() {
     for (Platform* platform : platforms) {
         QRect doodleRect(doodle->x(), doodle->y(), doodle->pixmap().width(), doodle->pixmap().height());  // Bottom part of the doodle
-        QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), 1);
-        if (doodleRect.intersects(platformRect) && doodle->verticalVelocity < 0) {
-            //jumpscore->add();
-            emit onJumpFinished();
+        QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), platform->pixmap().height());
+        if (doodleRect.intersects(platformRect) && Power < 0) {
+            Power = 20;
             break;
         }
     }
@@ -55,22 +55,18 @@ void Gameplay::updateDoodlePosition() {
     else if (doodle->toLeft) {
         doodle->moveBy(-10, 0); // Двигаем doodle влево
     }
-
-    if (doodle->isJumping) {
-        doodle->verticalVelocity -= doodle->gravity; // Применяем гравитацию
-        doodle->moveBy(0, -doodle->verticalVelocity);
-        doodle->jumpOffset += doodle->verticalVelocity;
-
-        if(doodle->y() < height()/2-64 && doodle->verticalVelocity>0) {
-            jumpscore->add(doodle->verticalVelocity);
-            highet+=doodle->verticalVelocity;
-            for(Platform* platform:platforms) {
-                platform->moveBy(0,doodle->verticalVelocity);
-            }
-        }
-    if(highet>= height())
+    for(Platform* platform:platforms) {
+        platform->moveBy(0,Power);
+    }
+    Power-=Gravity;
+    if(Power>0)
     {
+        jumpscore->add(Power);
+        highet+=Power;
+    }
+    if(highet>= height()) {
         highet = 0;
+        jumpscore->add();
         emit newParty();
     }
         for(int i = 0; i < platforms.size(); i++) {
@@ -80,16 +76,26 @@ void Gameplay::updateDoodlePosition() {
             }
         }
 }
-}
 
 void Gameplay::newCreation() {
     spawnPlatformsReborn(spawnPlatformsReborn(0, -height()));
 }
 void Gameplay::onJumpFinished() {
-        doodle->isJumping = true;
-        doodle->verticalVelocity = doodle->jumpForce;
+    doodle->isJumping = true;
+    Power = 20;
 }
 
+void Gameplay::makePause(){
+    if(!pause) {
+        musicLabel->show();
+    disconnect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
+    pause = true;
+    } else {
+        musicLabel->hide();
+        connect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
+        pause = false;
+    }
+}
 void Gameplay::keyPressEvent(QKeyEvent *event) {
     switch(event->key()) {
     case Qt::Key_Right:
@@ -98,6 +104,8 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_Left:
         doodle->toLeft = true;
         break;
+    case Qt::Key_Escape:
+        makePause();
     default:
         QGraphicsView::keyPressEvent(event); // Обработка других событий клавиатуры
     }
@@ -122,8 +130,8 @@ int Gameplay::spawnPlatformsReborn(int startHigh, int startLow) {
     int realWidth = width()-platforms[0]->pixmap().width();
     while(high_pos > startLow)
     {
-        int y_pos = high_pos-QRandomGenerator::global()->bounded(0, jumpHeight);
-        int x_pos = QRandomGenerator::global()->bounded(platforms[0]->pixmap().width(), realWidth);
+        int y_pos = high_pos-QRandomGenerator::global()->bounded(190, jumpHeight);
+        int x_pos = QRandomGenerator::global()->bounded(0, realWidth);
         platforms.append( new Platform(x_pos, y_pos, scene));
         high_pos=y_pos;
     }

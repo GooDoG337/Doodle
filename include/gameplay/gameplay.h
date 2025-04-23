@@ -7,7 +7,11 @@
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
+#include <QLabel>
 #include <QList>
+#include <QFileInfo>
+#include <QMediaPlayer>
+#include "../music/musicplayer.h"
 class Gameplay : public QGraphicsView {
     Q_OBJECT
 public:
@@ -31,8 +35,14 @@ private:
     int sceneHeight;
     Score* jumpscore;
     int highet = 0;
+    int Power = 20;
+    int Gravity = 1;
     void spawnPlatforms(int high, int num, bool stealth);
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
+    void makePause();
+    bool pause = false;
+        QLabel* musicLabel;
+    musicPlayer* musicplayer;
 signals:
     void jumpFinished();
     void newParty();

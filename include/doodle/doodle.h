@@ -11,7 +11,7 @@ public:
     bool toLeft = false;
     bool isJumping = true;
     double verticalVelocity;
-    const double jumpForce = 20.0; // Сила прыжка
-    const double gravity = 1;     // Гравитация
+    const double jumpForce = 0.0; // Сила прыжка
+    const double gravity = 0;     // Гравитация
     Doodle(int x, int y, QGraphicsScene* scene);
 };
