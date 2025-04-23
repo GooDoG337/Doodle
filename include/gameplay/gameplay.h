@@ -32,7 +32,7 @@ private:
     Score* jumpscore;
     int highet = 0;
     void spawnPlatforms(int high, int num, bool stealth);
-    int spawnPlatformsReborn(int startHigh = 0);
+    int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
 signals:
     void jumpFinished();
     void newParty();

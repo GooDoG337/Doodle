@@ -6,6 +6,7 @@ class Doodle: public QGraphicsPixmapItem
 public slots:
     void onJumpFinished();
 public:
+    int jumpOffset = 0;
     bool toRight = false;
     bool toLeft = false;
     bool isJumping = true;

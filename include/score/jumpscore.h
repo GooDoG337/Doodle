@@ -7,7 +7,7 @@ class Score : public QWidget {
     Q_OBJECT
 public:
     Score(QWidget *parent = nullptr);
-    void add();
+    void add(int i = 1);
     ~Score();
 public slots:
     void updateScoreLabel();

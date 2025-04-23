@@ -32,7 +32,7 @@ Gameplay::Gameplay(QWidget* parent)
     doodle = new Doodle(256,512-64, scene);
     platforms.append(new Platform(256,512-32,scene));
     QTextStream out(stdout);
-    out << spawnPlatformsReborn(spawnPlatformsReborn(height()*4)) << '\n';
+    out << spawnPlatformsReborn(spawnPlatformsReborn(height(),-height())) << '\n';
 
     setScene(scene);
 }
@@ -40,9 +40,9 @@ Gameplay::Gameplay(QWidget* parent)
 void Gameplay::checkCollison() {
     for (Platform* platform : platforms) {
         QRect doodleRect(doodle->x(), doodle->y(), doodle->pixmap().width(), doodle->pixmap().height());  // Bottom part of the doodle
-        QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), doodle->pixmap().height());
+        QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), 1);
         if (doodleRect.intersects(platformRect) && doodle->verticalVelocity < 0) {
-            jumpscore->add();
+            //jumpscore->add();
             emit onJumpFinished();
             break;
         }
@@ -59,13 +59,16 @@ void Gameplay::updateDoodlePosition() {
     if (doodle->isJumping) {
         doodle->verticalVelocity -= doodle->gravity; // Применяем гравитацию
         doodle->moveBy(0, -doodle->verticalVelocity);
-        highet+= doodle->verticalVelocity;
-        if(doodle->verticalVelocity > 0 && width()/2-doodle->y() > 64) {
-        for(Platform* platform:platforms) {
-            platform->moveBy(0,doodle->verticalVelocity);
+        doodle->jumpOffset += doodle->verticalVelocity;
+
+        if(doodle->y() < height()/2-64 && doodle->verticalVelocity>0) {
+            jumpscore->add(doodle->verticalVelocity);
+            highet+=doodle->verticalVelocity;
+            for(Platform* platform:platforms) {
+                platform->moveBy(0,doodle->verticalVelocity);
+            }
         }
-    }
-        if(highet>= height())
+    if(highet>= height())
     {
         highet = 0;
         emit newParty();
@@ -80,8 +83,7 @@ void Gameplay::updateDoodlePosition() {
 }
 
 void Gameplay::newCreation() {
-    spawnPlatformsReborn(spawnPlatformsReborn(height()*2));
-
+    spawnPlatformsReborn(spawnPlatformsReborn(0, -height()));
 }
 void Gameplay::onJumpFinished() {
         doodle->isJumping = true;
@@ -114,11 +116,11 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         }
     }
 }*/
-int Gameplay::spawnPlatformsReborn(int startHigh) {
+int Gameplay::spawnPlatformsReborn(int startHigh, int startLow) {
     int jumpHeight = 210;
     int high_pos = startHigh;
     int realWidth = width()-platforms[0]->pixmap().width();
-    while(high_pos > 0)
+    while(high_pos > startLow)
     {
         int y_pos = high_pos-QRandomGenerator::global()->bounded(0, jumpHeight);
         int x_pos = QRandomGenerator::global()->bounded(platforms[0]->pixmap().width(), realWidth);
