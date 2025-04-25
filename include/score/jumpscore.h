@@ -8,6 +8,7 @@ class Score : public QWidget {
 public:
     Score(QWidget *parent = nullptr);
     void add(int i = 1);
+    void itsOver();
     ~Score();
 public slots:
     void updateScoreLabel();

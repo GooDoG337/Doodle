@@ -30,7 +30,7 @@ Gameplay::Gameplay(QWidget* parent)
     colisionTimer->start(1);
     connect(this, &Gameplay::jumpFinished, this, &Gameplay::onJumpFinished);
     //Ебашим платформу
-    doodle = new Doodle(256,256, scene);
+    doodle = new Doodle(256, 256, scene);
     platforms.append(new Platform(256,256+32,scene));
     spawnPlatformsReborn(spawnPlatformsReborn(height(),-height()));
     musicplayer = new musicPlayer();

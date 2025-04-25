@@ -9,15 +9,12 @@
 #include "../score/jumpscore.h"
 #include <QRandomGenerator>
 Gameplay::Gameplay(QWidget* parent)
-    : QGraphicsView(parent), scene(new QGraphicsScene(this)), doodle(nullptr), sceneWidth(512), sceneHeight(512) {
+    : QGraphicsView(parent), scene(new QGraphicsScene(this)), sceneWidth(512), sceneHeight(512) {
     // Установка размеров окна
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSceneRect(0, 0, sceneWidth, sceneHeight);
     Background bckgrnd(this);
-    musicLabel = new QLabel("Now Playing:", this);
-    musicLabel->setGeometry(16, 32, 480, 64);
-    musicLabel->hide();
     //Настраиваем фпс
     fpsTimer = new QTimer(this);
     colisionTimer = new QTimer(this);
@@ -46,6 +43,9 @@ void Gameplay::checkCollison() {
     }
 }
 void Gameplay::updateDoodlePosition() {
+    if(platforms.isEmpty()) {
+        jumpscore->itsOver();
+    }
     if (doodle->toRight) {
         doodle->moveBy(10, 0); // Двигаем doodle вправо
     }
@@ -66,12 +66,12 @@ void Gameplay::updateDoodlePosition() {
         jumpscore->add();
         emit newParty();
     }
-        for(int i = 0; i < platforms.size(); i++) {
-            if(platforms[i]->y() > height()) {
-                platforms[i]->hide();
-                platforms.erase(platforms.begin()+i);
-            }
+    for(int i = 0; i < platforms.size(); i++) {
+        if(platforms[i]->y() > height()) {
+            platforms[i]->hide();
+            platforms.erase(platforms.begin()+i);
         }
+    }
 }
 
 void Gameplay::newCreation() {
@@ -84,11 +84,9 @@ void Gameplay::onJumpFinished() {
 
 void Gameplay::makePause(){
     if(!pause) {
-        musicLabel->show();
     disconnect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
     pause = true;
     } else {
-        musicLabel->hide();
         connect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
         pause = false;
     }
@@ -108,19 +106,7 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-/*void Gameplay::spawnPlatforms(int high, int num, bool stealth)
-{
-    for (int i = 0; i < num; ++i) {
-        if(!stealth)
-        {
-            platforms.append( new Platform(QRandomGenerator::global()->bounded(0, width()), QRandomGenerator::global()->bounded(-high, height()), scene));
-        } else {
-            int y_pos = QRandomGenerator::global()->bounded(int(-2*high-doodle->jumpForce), 2*int(doodle->jumpForce));
-            int x_pos = QRandomGenerator::global()->bounded(0, width());
-            platforms.append( new Platform(x_pos, y_pos, scene));
-        }
-    }
-}*/
+
 int Gameplay::spawnPlatformsReborn(int startHigh, int startLow) {
     int jumpHeight = 210;
     int high_pos = startHigh;

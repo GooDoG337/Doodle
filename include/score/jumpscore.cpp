@@ -22,3 +22,7 @@ void Score::add(int i) {
 void Score::updateScoreLabel(){
     scoreLabel->setText("Score: " + QString::number(jumpscore));
 }
+
+void Score::itsOver() {
+    scoreLabel->setText("Your record: " + QString::number(jumpscore));
+}
