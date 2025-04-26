@@ -8,13 +8,16 @@ class Score : public QWidget {
 public:
     Score(QWidget *parent = nullptr);
     void add(int i = 1);
-    void itsOver();
+    void updateRecord();
     ~Score();
 public slots:
     void updateScoreLabel();
+    void itsOver();
 signals:
     void scoreChanged();
+    void scoreZero();
 private:
     QLabel *scoreLabel;
     int jumpscore;
+    int record;
 };

@@ -9,10 +9,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
-#find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
+#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+#find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp)
@@ -36,15 +36,14 @@ else()
     else()
         add_executable(Doodle
             ${PROJECT_SOURCES}
-            include/score/jumpscore.h
             include/score/jumpscore.cpp
-            #include/gameplay/gameplay.h include/gameplay/gameplay.cpp
-            include/gameplayNOMUSIC/gameplay.cpp include/gameplayNOMUSIC/gameplay.h
-            #include/music/musicplayer.cpp include/music/musicplayer.h
-            include/platform/platform.h include/platform/platform.cpp
-            include/doodle/doodle.h include/doodle/doodle.cpp
-            include/background/background.h include/background/background.cpp
-            include/logic/gamelogic.h include/logic/gamelogic.cpp
+            #include/gameplay/gameplay.cpp
+            include/gameplayNOMUSIC/gameplay.cpp
+            #include/music/musicplayer.cpp
+            include/platform/platform.cpp
+            include/doodle/doodle.cpp
+            include/background/background.cpp
+            include/logic/gamelogic.cpp
 
         )
     endif()

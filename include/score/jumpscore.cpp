@@ -9,7 +9,7 @@ Score::Score(QWidget* parent): QWidget(parent){
     scoreLabel->setGeometry(10, 10, 150, 40);  // позиция и размер на экране
     scoreLabel->show();
     connect(this, &Score::scoreChanged, this, &Score::updateScoreLabel);
-    setFixedSize(400, 600);  // Размер окна игры
+    connect(this, &Score::scoreZero, this, &Score::itsOver);
     setStyleSheet("background-color: #222;");
 }
 
@@ -17,12 +17,25 @@ Score::~Score() {}
 
 void Score::add(int i) {
     jumpscore+=i;
-    emit scoreChanged();
+    if(i == 0) {
+        updateRecord();
+    }
+    if(jumpscore >= 0)
+    {
+        emit scoreChanged();
+    } else {
+        emit scoreZero();
+    }
+
 }
 void Score::updateScoreLabel(){
     scoreLabel->setText("Score: " + QString::number(jumpscore));
 }
 
 void Score::itsOver() {
-    scoreLabel->setText("Your record: " + QString::number(jumpscore));
+    scoreLabel->setStyleSheet("font-size: 12px; color: white; background-color: rgba(0, 0, 0, 150); padding: 1px;");
+    scoreLabel->setText("Your record: " + QString::number(record));
+}
+void Score::updateRecord() {
+    record = jumpscore;
 }

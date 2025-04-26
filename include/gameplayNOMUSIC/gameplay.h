@@ -38,7 +38,9 @@ private:
     void spawnPlatforms(int high, int num, bool stealth);
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
     void makePause();
+    void makeStop();
     bool pause = false;
+    QGraphicsPixmapItem* doodle_clone;
 signals:
     void jumpFinished();
     void newParty();

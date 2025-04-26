@@ -13,5 +13,6 @@ public:
     double verticalVelocity;
     const double jumpForce = 0.0; // Сила прыжка
     const double gravity = 0;     // Гравитация
+    bool isTeleporting = false;
     Doodle(int x, int y, QGraphicsScene* scene);
 };
