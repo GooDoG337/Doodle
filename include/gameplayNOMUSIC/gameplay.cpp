@@ -26,6 +26,20 @@ Gameplay::Gameplay(QWidget* parent)
     spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
     connect(score, &Score::scoreZero, this, &Gameplay::makeStop);
     setScene(scene);
+
+    pauseMenuLabel = new QLabel(this);
+    pauseMenuLabel->setText("PAUSED");
+    pauseMenuLabel->setAlignment(Qt::AlignCenter);
+    pauseMenuLabel->setStyleSheet("background-color: rgba(0, 0, 0, 150); color: white; font-size: 32px;");
+    pauseMenuLabel->setGeometry(0, 0, width(), height());
+    pauseMenuLabel->hide();
+
+    stopMenuLabel = new QLabel(this);
+    stopMenuLabel->setText("GAME OVER");
+    stopMenuLabel->setAlignment(Qt::AlignCenter);
+    stopMenuLabel->setStyleSheet("background-color: rgba(255, 0, 0, 150); color: white; font-size: 36px;");
+    stopMenuLabel->setGeometry(0, 0, width(), height());
+    stopMenuLabel->hide();
 }
 
 void Gameplay::checkCollison() {
@@ -76,6 +90,7 @@ void Gameplay::makePause(){
     } else {
         moveTimer->start(16);
         pause = false;
+        pauseMenuLabel->hide();
     }
 }
 
@@ -96,6 +111,16 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         break;
     case Qt::Key_Escape:
         makePause();
+    case Qt::Key_R:
+        if (stopMenuLabel->isVisible()) {
+            restartButton->click();
+        }
+        break;
+    case Qt::Key_Q:
+        if (pauseMenuLabel->isVisible() || stopMenuLabel->isVisible()) {
+            quitButton->click();
+        }
+        break;
     default:
         QGraphicsView::keyPressEvent(event); // Обработка других событий клавиатуры
     }
