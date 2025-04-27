@@ -3,6 +3,7 @@
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
 #include "../volume/volume.h"
+#include "../background/background.h"
 #include <QLabel>
 #include <QList>
 #include <QFileInfo>
@@ -24,18 +25,22 @@ private:
     QGraphicsScene* scene;
     Doodle* doodle;
     QList<Platform*> platforms;
+
     int sceneWidth = 512;
     int sceneHeight = 512;
     Score* score;
+    Background* bckgrnd;
     int heightForSpawn = 0;
-    int Power = 20;
+    int Power = 0;
     int Gravity = 1;
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
     void makePause();   QLabel* pauseMenuLabel;
     void makeStop();    QLabel* stopMenuLabel;
-    bool pause = false;
     QPushButton *restartButton;
     QPushButton *quitButton;
+    QLabel* musicLabel;
+    bool pause = false;
+    bool stop = false;
 
 signals:
     void newPlatformsNeeded();

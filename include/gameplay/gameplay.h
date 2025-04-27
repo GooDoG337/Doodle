@@ -4,6 +4,8 @@
 #include "../score/jumpscore.h"
 #include "../volume/volume.h"
 #include "../music/musicplayer.h"
+#include "../background/background.h"
+#include <QPushButton>
 class Gameplay : public QGraphicsView {
     Q_OBJECT
 public:
@@ -22,6 +24,8 @@ private:
     QGraphicsScene* scene;
     Doodle* doodle;
     QList<Platform*> platforms;
+    Background* bckgrnd;
+
     int sceneWidth = 512;
     int sceneHeight = 512;
     Score* score;
@@ -29,8 +33,10 @@ private:
     int Power = 20;
     int Gravity = 1;
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
-    void makePause();
-    void makeStop();
+    void makePause(); QLabel* pauseMenuLabel;
+    void makeStop();  QLabel* stopMenuLabel;
+    QPushButton *restartButton;
+    QPushButton *quitButton;
     QLabel* musicLabel;
     musicPlayer* mplayer;
     bool pause = false;

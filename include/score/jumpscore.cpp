@@ -37,3 +37,7 @@ void Score::itsOver() {
 void Score::updateRecord() {
     record = jumpscore;
 }
+void Score::clear() {
+    record = 0;
+    jumpscore = 0;
+}

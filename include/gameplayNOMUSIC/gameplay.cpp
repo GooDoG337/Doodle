@@ -14,15 +14,16 @@ Gameplay::Gameplay(QWidget* parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFixedSize(sceneWidth,sceneHeight);
     setSceneRect(0, 0, sceneWidth, sceneHeight);
-    Background bckgrnd(this);
     moveTimer = new QTimer(this);
     connect(moveTimer, &QTimer::timeout, this, &Gameplay::updateMoves);
     connect(moveTimer, &QTimer::timeout, this, &Gameplay::checkCollison);
     connect(this, &Gameplay::newPlatformsNeeded, this, &Gameplay::newCreation);
     score = new Score(this);
-    moveTimer->start(16);
-    doodle = new Doodle(256,200, scene);
+    doodle = new Doodle(256,128, scene);
     platforms.append(new Platform(256,216,scene, PlatType::Normal));
+    moveTimer->start(16);
+    score->add(57);
+    bckgrnd = new Background(this);
     spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
     connect(score, &Score::scoreZero, this, &Gameplay::makeStop);
     setScene(scene);
@@ -84,21 +85,27 @@ void Gameplay::newCreation() {
 }
 
 void Gameplay::makePause(){
+    if(!stop) {
     if(!pause) {
         moveTimer->stop();
         pause = true;
+        pauseMenuLabel->show();
+
     } else {
         moveTimer->start(16);
         pause = false;
         pauseMenuLabel->hide();
+    }
     }
 }
 
 void Gameplay::makeStop() {
     for(int i = 0; i < platforms.size(); i++) {
         platforms[i]->hide();
-        platforms.erase(platforms.begin()+i);
     }
+    platforms.clear();
+    stop = true;
+    stopMenuLabel->show();
     moveTimer->stop();
 }
 void Gameplay::keyPressEvent(QKeyEvent *event) {
@@ -113,7 +120,19 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         makePause();
     case Qt::Key_R:
         if (stopMenuLabel->isVisible()) {
-            restartButton->click();
+//            restartButton->click();
+            stopMenuLabel->hide();
+            stop = false;
+            platforms.clear();
+            platforms.append(new Platform(256,216,scene, PlatType::Normal));
+            doodle->setPos(256,128);
+            doodle->ghost->setPos(-doodle->pixmap().width(), -doodle->pixmap().height());
+            spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
+            score->clear();
+            Power = 20;
+            score->add(63);
+            moveTimer->start(16);
+            heightForSpawn = 0;
         }
         break;
     case Qt::Key_Q:

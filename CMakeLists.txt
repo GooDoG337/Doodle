@@ -9,12 +9,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
-#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-#find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 OPTIONAL_COMPONENTS Multimedia)
+find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS Multimedia)
 set(PROJECT_SOURCES
+    include/score/jumpscore.cpp
+    include/platform/platform.cpp
+    include/doodle/doodle.cpp
+    include/background/background.cpp
+    include/volume/volume.h
+    include/volume/volume.cpp
         main.cpp)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -22,37 +27,23 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET Doodle APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
-    if(ANDROID)
-        add_library(Doodle SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
+
+    if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
         add_executable(Doodle
             ${PROJECT_SOURCES}
-            include/score/jumpscore.cpp
-            include/gameplay/gameplay.cpp
-            #include/gameplayNOMUSIC/gameplay.cpp
-            include/music/musicplayer.cpp
-            include/platform/platform.cpp
-            include/doodle/doodle.cpp
-            include/background/background.cpp
+            include/gameplayNOMUSIC/gameplay.cpp)
+        target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+     else()
+         add_executable(Doodle
+             ${PROJECT_SOURCES}
+             include/gameplay/gameplay.cpp
+             include/music/musicplayer.cpp)
+         target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+         target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
 
-            include/volume/volume.h
-            include/volume/volume.cpp
-
-        )
     endif()
 endif()
-
-target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

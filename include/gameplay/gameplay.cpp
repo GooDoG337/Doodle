@@ -32,10 +32,25 @@ Gameplay::Gameplay(QWidget* parent)
     setScene(scene);
     mplayer = new musicPlayer();
     musicLabel = new QLabel("Now playing: " + mplayer->getFileName(), this);
+    musicLabel->setStyleSheet("color: white;");
     musicLabel->hide();
-    musicLabel->setGeometry(8, 16, 512, 128);
+    musicLabel->setGeometry(8, 16, 256, 128);
     connect(mplayer, &musicPlayer::currentMediaChanged, this, &Gameplay::newMediaPlaying);
     setScene(scene);
+
+    pauseMenuLabel = new QLabel(this);
+    pauseMenuLabel->setText("PAUSED");
+    pauseMenuLabel->setAlignment(Qt::AlignCenter);
+    pauseMenuLabel->setStyleSheet("background-color: rgba(0, 0, 0, 150); color: white; font-size: 32px;");
+    pauseMenuLabel->setGeometry(0, 0, width(), height());
+    pauseMenuLabel->hide();
+
+    stopMenuLabel = new QLabel(this);
+    stopMenuLabel->setText("GAME OVER");
+    stopMenuLabel->setAlignment(Qt::AlignCenter);
+    stopMenuLabel->setStyleSheet("background-color: rgba(255, 0, 0, 150); color: white; font-size: 36px;");
+    stopMenuLabel->setGeometry(0, 0, width(), height());
+    stopMenuLabel->hide();
 }
 
 void Gameplay::newMediaPlaying() {
@@ -89,19 +104,22 @@ void Gameplay::makePause(){
         musicLabel->show();
         moveTimer->stop();
         pause = true;
+        pauseMenuLabel->show();
     } else {
         musicLabel->hide();
         moveTimer->start(16);
         pause = false;
+        pauseMenuLabel->hide();
     }
     }
 }
 void Gameplay::makeStop() {
     for(int i = 0; i < platforms.size(); i++) {
         platforms[i]->hide();
-        platforms.erase(platforms.begin()+i);
     }
+    platforms.clear();
     stop = true;
+    stopMenuLabel->show();
     moveTimer->stop();
 }
 void Gameplay::keyPressEvent(QKeyEvent *event) {
@@ -114,6 +132,28 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         break;
     case Qt::Key_Escape:
         makePause();
+    case Qt::Key_R:
+        if (stopMenuLabel->isVisible()) {
+            //            restartButton->click();
+            stopMenuLabel->hide();
+            stop = false;
+            platforms.clear();
+            platforms.append(new Platform(256,216,scene, PlatType::Normal));
+            doodle->setPos(256,128);
+            doodle->ghost->setPos(-doodle->pixmap().width(), -doodle->pixmap().height());
+            spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
+            score->clear();
+            Power = 20;
+            score->add(63);
+            moveTimer->start(16);
+            heightForSpawn = 0;
+        }
+        break;
+    case Qt::Key_Q:
+        if (pauseMenuLabel->isVisible() || stopMenuLabel->isVisible()) {
+            quitButton->click();
+        }
+        break;
     default:
         QGraphicsView::keyPressEvent(event); // Обработка других событий клавиатуры
     }
