@@ -2,14 +2,11 @@
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
-<<<<<<< HEAD
 #include "../volume/volume.h"
-=======
 #include <QLabel>
 #include <QList>
 #include <QFileInfo>
 #include <QPushButton>
->>>>>>> d6684096e9cd095e7114765e85099bca3d1a4eb3
 class Gameplay : public QGraphicsView {
     Q_OBJECT
 public:
@@ -37,15 +34,9 @@ private:
     void makePause();   QLabel* pauseMenuLabel;
     void makeStop();    QLabel* stopMenuLabel;
     bool pause = false;
-<<<<<<< HEAD
-=======
-    QGraphicsPixmapItem* doodle_clone;
-
     QPushButton *restartButton;
     QPushButton *quitButton;
 
-
->>>>>>> d6684096e9cd095e7114765e85099bca3d1a4eb3
 signals:
     void newPlatformsNeeded();
 };
