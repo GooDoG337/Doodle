@@ -7,7 +7,9 @@
 #include "../background/background.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
+
 #include <QRandomGenerator>
+#include <QLabel>
 Gameplay::Gameplay(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(this)), sceneWidth(512), sceneHeight(512) {
     // Установка размеров окна
@@ -35,6 +37,20 @@ Gameplay::Gameplay(QWidget* parent)
     scene->addItem(doodle_clone);
     connect(jumpscore, &Score::scoreZero, this, &Gameplay::makeStop);
     setScene(scene);
+
+    pauseMenuLabel = new QLabel(this);
+    pauseMenuLabel->setText("PAUSED");
+    pauseMenuLabel->setAlignment(Qt::AlignCenter);
+    pauseMenuLabel->setStyleSheet("background-color: rgba(0, 0, 0, 150); color: white; font-size: 32px;");
+    pauseMenuLabel->setGeometry(0, 0, width(), height());
+    pauseMenuLabel->hide();
+
+    stopMenuLabel = new QLabel(this);
+    stopMenuLabel->setText("GAME OVER");
+    stopMenuLabel->setAlignment(Qt::AlignCenter);
+    stopMenuLabel->setStyleSheet("background-color: rgba(255, 0, 0, 150); color: white; font-size: 36px;");
+    stopMenuLabel->setGeometry(0, 0, width(), height());
+    stopMenuLabel->hide();
 }
 
 void Gameplay::checkCollison() {
@@ -110,6 +126,7 @@ void Gameplay::updateDoodlePosition() {
 void Gameplay::newCreation() {
     spawnPlatformsReborn(spawnPlatformsReborn(platforms[platforms.size()-1]->y(), -height()));
 }
+
 void Gameplay::onJumpFinished() {
     doodle->isJumping = true;
     Power = 20;
@@ -119,9 +136,11 @@ void Gameplay::makePause(){
     if(!pause) {
     disconnect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
     pause = true;
+    pauseMenuLabel->show();
     } else {
         connect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
         pause = false;
+        pauseMenuLabel->hide();
     }
 }
 
@@ -132,6 +151,7 @@ void Gameplay::makeStop() {
     }
     disconnect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
     disconnect(colisionTimer, &QTimer::timeout, this, &Gameplay::checkCollison);
+    stopMenuLabel->show();
 }
 void Gameplay::keyPressEvent(QKeyEvent *event) {
     switch(event->key()) {

@@ -7,7 +7,6 @@
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
-#include "../volume/volume.h"
 #include <QLabel>
 #include <QList>
 #include <QFileInfo>
@@ -38,8 +37,8 @@ private:
     int Gravity = 1;
     void spawnPlatforms(int high, int num, bool stealth);
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
-    void makePause();
-    void makeStop();
+    void makePause();   QLabel* pauseMenuLabel;
+    void makeStop();    QLabel* stopMenuLabel;
     bool pause = false;
     QGraphicsPixmapItem* doodle_clone;
 signals:
