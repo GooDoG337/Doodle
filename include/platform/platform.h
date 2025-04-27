@@ -7,5 +7,5 @@ class Platform : public QGraphicsPixmapItem {
     QPixmap* image;
 public:
     PlatType GetType();
-    Platform(int x, int y, QGraphicsScene* scene, PlatType PlatType);
+    Platform(int x, int y, QGraphicsScene* scene, PlatType PlatType = PlatType::Normal);
 };

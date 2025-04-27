@@ -1,16 +1,8 @@
 #pragma once
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QPixmap>
-#include <QPropertyAnimation>
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
-#include <QLabel>
-#include <QList>
-#include <QFileInfo>
-#include <QMediaPlayer>
+#include "../volume/volume.h"
 #include "../music/musicplayer.h"
 class Gameplay : public QGraphicsView {
     Q_OBJECT
@@ -20,30 +12,29 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 private slots:
-    void updateDoodlePosition();
-    void onJumpFinished();
+    void updateMoves();
     void newCreation();
+    void newMediaPlaying();
 private:
+    void wheelEvent(QWheelEvent *event) override;
     void checkCollison();
-    QTimer* fpsTimer;
-    QTimer* colisionTimer;
-    bool higher = false;
+    QTimer* moveTimer;
     QGraphicsScene* scene;
     Doodle* doodle;
     QList<Platform*> platforms;
-    int sceneWidth;
-    int sceneHeight;
-    Score* jumpscore;
-    int highet = 0;
+    int sceneWidth = 512;
+    int sceneHeight = 512;
+    Score* score;
+    int heightForSpawn = 0;
     int Power = 20;
     int Gravity = 1;
-    void spawnPlatforms(int high, int num, bool stealth);
     int spawnPlatformsReborn(int startHigh = 0, int startLow = 0);
     void makePause();
+    void makeStop();
+    QLabel* musicLabel;
+    musicPlayer* mplayer;
     bool pause = false;
-        QLabel* musicLabel;
-    musicPlayer* musicplayer;
+    bool stop = false;
 signals:
-    void jumpFinished();
-    void newParty();
+    void newPlatformsNeeded();
 };

@@ -9,92 +9,100 @@
 #include "../score/jumpscore.h"
 #include "../music/musicplayer.h"
 #include <QRandomGenerator>
+
+
 Gameplay::Gameplay(QWidget* parent)
-    : QGraphicsView(parent), scene(new QGraphicsScene(this)), doodle(nullptr), sceneWidth(512), sceneHeight(512) {
-    // Установка размеров окна
+    : QGraphicsView(parent) {
+    scene = new QGraphicsScene(this);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setFixedSize(sceneWidth,sceneHeight);
     setSceneRect(0, 0, sceneWidth, sceneHeight);
     Background bckgrnd(this);
-    musicLabel = new QLabel("Now Playing:", this);
-    musicLabel->setGeometry(16, 32, 480, 64);
+    moveTimer = new QTimer(this);
+    connect(moveTimer, &QTimer::timeout, this, &Gameplay::updateMoves);
+    connect(moveTimer, &QTimer::timeout, this, &Gameplay::checkCollison);
+    connect(this, &Gameplay::newPlatformsNeeded, this, &Gameplay::newCreation);
+    score = new Score(this);
+    moveTimer->start(16);
+    doodle = new Doodle(256,200, scene);
+    platforms.append(new Platform(256,216,scene, PlatType::Normal));
+    spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
+    connect(score, &Score::scoreZero, this, &Gameplay::makeStop);
+    setScene(scene);
+    mplayer = new musicPlayer();
+    musicLabel = new QLabel("Now playing: " + mplayer->getFileName(), this);
     musicLabel->hide();
-    //Настраиваем фпс
-    fpsTimer = new QTimer(this);
-    colisionTimer = new QTimer(this);
-    connect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
-    connect(colisionTimer, &QTimer::timeout, this, &Gameplay::checkCollison);
-    connect(this, &Gameplay::newParty, this, &Gameplay::newCreation);
-    jumpscore = new Score(this);
-    fpsTimer->start(16); // Обновляем каждые 16 миллисекунд (примерно 60 FPS)
-    colisionTimer->start(1);
-    connect(this, &Gameplay::jumpFinished, this, &Gameplay::onJumpFinished);
-    //Ебашим платформу
-    doodle = new Doodle(256, 256, scene);
-    platforms.append(new Platform(256,256+32,scene));
-    spawnPlatformsReborn(spawnPlatformsReborn(height(),-height()));
-    musicplayer = new musicPlayer();
-    musicLabel->setText("Now playing:" + musicplayer->getFileName());
+    musicLabel->setGeometry(8, 16, 512, 128);
+    connect(mplayer, &musicPlayer::currentMediaChanged, this, &Gameplay::newMediaPlaying);
     setScene(scene);
 }
 
+void Gameplay::newMediaPlaying() {
+    musicLabel->setText("Now playing: " + mplayer->getFileName());
+}
 void Gameplay::checkCollison() {
+    QRect doodleRect(doodle->x(), doodle->y()+75, doodle->pixmap().width(), 3);  // Bottom part of the doodle
+    QRect doodle_ghostRect(doodle->ghost->x(), doodle->ghost->y()+75, doodle->pixmap().width(), 3);
     for (Platform* platform : platforms) {
-        QRect doodleRect(doodle->x(), doodle->y(), doodle->pixmap().width(), doodle->pixmap().height());  // Bottom part of the doodle
         QRect platformRect(platform->x(), platform->y(), platform->pixmap().width(), platform->pixmap().height());
-        if (doodleRect.intersects(platformRect) && Power < 0) {
-            Power = 20;
+        if ((doodleRect.intersects(platformRect) || doodle_ghostRect.intersects(platformRect)) && Power < 0) {
+            if(platform->GetType() == PlatType::Normal)
+            {
+                Power = 20;
+            } else if (platform->GetType() == PlatType::TripleJump)
+            {
+                Power = 60;
+            }
             break;
         }
     }
 }
-void Gameplay::updateDoodlePosition() {
-    if (doodle->toRight) {
-        doodle->moveBy(10, 0); // Двигаем doodle вправо
-    }
-    else if (doodle->toLeft) {
-        doodle->moveBy(-10, 0); // Двигаем doodle влево
-    }
+void Gameplay::updateMoves() {
+    doodle->updatePosition();
     for(Platform* platform:platforms) {
         platform->moveBy(0,Power);
     }
+    score->add(Power);
+    heightForSpawn+=Power;
     Power-=Gravity;
-    if(Power>0)
-    {
-        jumpscore->add(Power);
-        highet+=Power;
+    if(heightForSpawn>= height()) {
+        heightForSpawn = 0;
+        emit newPlatformsNeeded();
     }
-    if(highet>= height()) {
-        highet = 0;
-        jumpscore->add();
-        emit newParty();
-    }
-        for(int i = 0; i < platforms.size(); i++) {
-            if(platforms[i]->y() > height()) {
-                platforms[i]->hide();
-                platforms.erase(platforms.begin()+i);
-            }
+    for(int i = 0; i < platforms.size(); i++) {
+        if(platforms[i]->y() > height()) {
+            platforms[i]->hide();
+            platforms.erase(platforms.begin()+i);
         }
+    }
 }
 
 void Gameplay::newCreation() {
-    spawnPlatformsReborn(spawnPlatformsReborn(0, -height()));
-}
-void Gameplay::onJumpFinished() {
-    doodle->isJumping = true;
-    Power = 20;
+    spawnPlatformsReborn(platforms[platforms.size()-1]->y(), -height());
 }
 
+
 void Gameplay::makePause(){
+    if(!stop) {
     if(!pause) {
         musicLabel->show();
-    disconnect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
-    pause = true;
+        moveTimer->stop();
+        pause = true;
     } else {
         musicLabel->hide();
-        connect(fpsTimer, &QTimer::timeout, this, &Gameplay::updateDoodlePosition);
+        moveTimer->start(16);
         pause = false;
     }
+    }
+}
+void Gameplay::makeStop() {
+    for(int i = 0; i < platforms.size(); i++) {
+        platforms[i]->hide();
+        platforms.erase(platforms.begin()+i);
+    }
+    stop = true;
+    moveTimer->stop();
 }
 void Gameplay::keyPressEvent(QKeyEvent *event) {
     switch(event->key()) {
@@ -111,32 +119,28 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-/*void Gameplay::spawnPlatforms(int high, int num, bool stealth)
-{
-    for (int i = 0; i < num; ++i) {
-        if(!stealth)
-        {
-            platforms.append( new Platform(QRandomGenerator::global()->bounded(0, width()), QRandomGenerator::global()->bounded(-high, height()), scene));
-        } else {
-            int y_pos = QRandomGenerator::global()->bounded(int(-2*high-doodle->jumpForce), 2*int(doodle->jumpForce));
-            int x_pos = QRandomGenerator::global()->bounded(0, width());
-            platforms.append( new Platform(x_pos, y_pos, scene));
-        }
-    }
-}*/
-int Gameplay::spawnPlatformsReborn(int startHigh, int startLow) {
-    int jumpHeight = 210;
-    int high_pos = startHigh;
-    int realWidth = width()-platforms[0]->pixmap().width();
-    while(high_pos > startLow)
-    {
-        int y_pos = high_pos-QRandomGenerator::global()->bounded(190, jumpHeight);
-        int x_pos = QRandomGenerator::global()->bounded(0, realWidth);
-        platforms.append( new Platform(x_pos, y_pos, scene));
-        high_pos=y_pos;
-    }
-    return high_pos;
+void Gameplay::wheelEvent(QWheelEvent *event)  {
+
 }
+
+int Gameplay::spawnPlatformsReborn(int startLow, int startHigh) {
+    int jumpHeight = 180;
+    int height_pos = startLow;
+    int realWidth = width()-platforms[0]->pixmap().width();
+    while(height_pos > startHigh)
+    {
+        PlatType type = PlatType::Normal;
+        if(QRandomGenerator::global()->bounded(0,50) == 0) {
+            type = PlatType::TripleJump;
+        }
+        int y_pos = height_pos-jumpHeight;
+        int x_pos = QRandomGenerator::global()->bounded(0, 342);
+        platforms.append( new Platform(x_pos, y_pos, scene, type));
+        height_pos=y_pos;
+    }
+    return height_pos;
+}
+
 void Gameplay::keyReleaseEvent(QKeyEvent *event) {
     switch(event->key()) {
     case Qt::Key_Right:

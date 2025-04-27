@@ -2,30 +2,35 @@
 #include <QDir>
 #include <QRandomGenerator>
 #include <QTextStream>
+#include <QDebug>
 musicPlayer::musicPlayer() {
     QDir dir("../../assets/sound/music");
     filters = new QStringList;
     *filters << "*.mp3" << "*.MP3";
     QFileInfoList fileInfoList = dir.entryInfoList(*filters, QDir::Files);
-    mp3FileNames = new QVector<QFileInfo>();
-    QTextStream out(stdout);
+    playlist = new QMediaPlaylist();
+
     for (const QFileInfo &fileInfo : fileInfoList) {
-        mp3FileNames->append(fileInfo.absoluteFilePath());
+        playlist->addMedia(QUrl::fromLocalFile(fileInfo.absoluteFilePath()));
     }
-    if(!mp3FileNames->isEmpty())
+    if(!playlist->isEmpty())
     {
-        int randomIndex = QRandomGenerator::global()->bounded(0,mp3FileNames->size());
-        out << randomIndex;
-        randomFileInfo = new QFileInfo;
-        *randomFileInfo = mp3FileNames->at(randomIndex);
-        setMedia(QUrl::fromLocalFile(randomFileInfo->absoluteFilePath()));
+        playlist->shuffle();
+        setPlaylist(playlist);
         play();
+    } else {
+        qWarning() << "No music found.";
     }
+    connect(this, &musicPlayer::stateChanged, this, &musicPlayer::onPlaylistEnd);
 }
 
 QString musicPlayer::getFileName() {
-    return randomFileInfo->fileName();
+    return currentMedia().canonicalUrl().fileName();
 }
-
-
+void musicPlayer::onPlaylistEnd() {
+    if(state() == QMediaPlayer::StoppedState)
+    {
+        play();
+    }
+}
 

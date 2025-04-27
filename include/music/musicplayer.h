@@ -2,15 +2,17 @@
 #include <QDir>
 #include <QStringList>
 #include <QMediaPlayer>
+#include <QMediaPlaylist>
 #include <QFileInfo>
 class musicPlayer:public QMediaPlayer
 {
 private:
     QStringList* filters;
-    QVector<QFileInfo>* mp3FileNames;
     QFileInfo* randomFileInfo;
-    QVector<QFileInfo>* mp3BackupNames;
+    QMediaPlaylist* playlist;
 public:
     musicPlayer();
     QString getFileName();
+public slots:
+    void onPlaylistEnd();
 };

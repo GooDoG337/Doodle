@@ -1,8 +1,6 @@
 #include "jumpscore.h"
 
-
 Score::Score(QWidget* parent): QWidget(parent){
-    jumpscore = 0;
     scoreLabel = new QLabel(this);
     scoreLabel->setText("Score: 0");
     scoreLabel->setStyleSheet("font-size: 24px; color: white; background-color: rgba(0, 0, 0, 150); padding: 1px;");
@@ -20,7 +18,7 @@ void Score::add(int i) {
     if(i == 0) {
         updateRecord();
     }
-    if(jumpscore >= 0)
+    if(jumpscore > 0)
     {
         emit scoreChanged();
     } else {

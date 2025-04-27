@@ -1,7 +1,4 @@
-#include <QPixmap>
 #include <QDebug>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 #include "../platform/platform.h"
 Platform::Platform(int x, int y, QGraphicsScene* scene, PlatType type):type(type) {
     if(type == PlatType::Normal) {
@@ -11,9 +8,10 @@ Platform::Platform(int x, int y, QGraphicsScene* scene, PlatType type):type(type
     }
     if (!image->isNull()) {
         setPixmap(*image);
-        int initialX = x;
-        int initialY = y;
-        setPos(initialX, initialY);
+        setPos(x, y);
+    } else {
+        qCritical() << "No platform sprite found.";
+        throw std::logic_error("Gameplay is unplayable");
     }
     scene->addItem(this);
 }

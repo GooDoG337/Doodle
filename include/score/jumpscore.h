@@ -1,5 +1,4 @@
 #pragma once
-#include <QMainWindow>
 #include <QLabel>
 #include <QWidget>
 
@@ -7,7 +6,7 @@ class Score : public QWidget {
     Q_OBJECT
 public:
     Score(QWidget *parent = nullptr);
-    void add(int i = 1);
+    void add(int i);
     void updateRecord();
     ~Score();
 public slots:
@@ -18,6 +17,6 @@ signals:
     void scoreZero();
 private:
     QLabel *scoreLabel;
-    int jumpscore;
-    int record;
+    int jumpscore = 0;
+    int record = 0;
 };
