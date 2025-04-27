@@ -44,6 +44,8 @@ else()
             include/doodle/doodle.cpp
             include/background/background.cpp
             include/logic/gamelogic.cpp
+            include/volume/volume.h
+            include/volume/volume.cpp
 
         )
     endif()

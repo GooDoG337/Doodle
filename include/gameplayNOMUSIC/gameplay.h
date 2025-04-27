@@ -7,6 +7,7 @@
 #include "../platform/platform.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
+#include "../volume/volume.h"
 #include <QLabel>
 #include <QList>
 #include <QFileInfo>
