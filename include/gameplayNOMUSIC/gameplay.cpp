@@ -7,7 +7,6 @@
 #include "../background/background.h"
 #include "../doodle/doodle.h"
 #include "../score/jumpscore.h"
-
 #include <QRandomGenerator>
 #include <QLabel>
 Gameplay::Gameplay(QWidget* parent)
@@ -163,6 +162,16 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         break;
     case Qt::Key_Escape:
         makePause();
+    case Qt::Key_R:
+        if (stopMenuLabel->isVisible()) {
+            restartButton->click();
+        }
+        break;
+    case Qt::Key_Q:
+        if (pauseMenuLabel->isVisible() || stopMenuLabel->isVisible()) {
+            quitButton->click();
+        }
+        break;
     default:
         QGraphicsView::keyPressEvent(event); // Обработка других событий клавиатуры
     }

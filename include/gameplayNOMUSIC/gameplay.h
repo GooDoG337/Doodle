@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QList>
 #include <QFileInfo>
+#include <QPushButton>
 class Gameplay : public QGraphicsView {
     Q_OBJECT
 public:
@@ -41,6 +42,11 @@ private:
     void makeStop();    QLabel* stopMenuLabel;
     bool pause = false;
     QGraphicsPixmapItem* doodle_clone;
+
+    QPushButton *restartButton;
+    QPushButton *quitButton;
+
+
 signals:
     void jumpFinished();
     void newParty();
