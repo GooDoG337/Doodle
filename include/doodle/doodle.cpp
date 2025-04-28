@@ -1,7 +1,7 @@
 #include "doodle.h"
 #include <QDebug>
 Doodle::Doodle(int x, int y, QGraphicsScene* scene) {
-    doodleSprite = new QPixmap("../../assets/ladapriora.jpg");
+    doodleSprite = new QPixmap("../../assets/102.jpg");
     if (doodleSprite->isNull()) {
         qCritical() << "No doodle sprite found.";
         throw std::logic_error("Gameplay is unplayable");
