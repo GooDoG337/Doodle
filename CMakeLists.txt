@@ -22,12 +22,6 @@ set(PROJECT_SOURCES
     include/volume/volume.cpp
         main.cpp)
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Doodle
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-endif()
 if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
     add_executable(Doodle
     ${PROJECT_SOURCES}
