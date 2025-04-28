@@ -22,17 +22,26 @@ set(PROJECT_SOURCES
     include/volume/volume.cpp
         main.cpp)
 
-if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
-    add_executable(Doodle
-    ${PROJECT_SOURCES}
-       include/gameplay/gameplay.cpp
-        include/music/musicplayer.cpp)
-    target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
-else()
-    add_executable(Doodle
+#if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
+#    add_executable(Doodle
+#    ${PROJECT_SOURCES}
+#       include/gameplay/gameplay.cpp
+#        include/music/musicplayer.cpp)
+#    target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
+#else()
+#    add_executable(Doodle
+#        ${PROJECT_SOURCES}
+#        include/gameplay/gameplay.cpp
+#        include/music/musicplayer.cpp)
+#        #include/gameplayNOMUSIC/gameplay.cpp)
+#    target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
+#endif(
+add_executable(Doodle
         ${PROJECT_SOURCES}
-        include/gameplayNOMUSIC/gameplay.cpp)
-endif()
+        include/gameplay/gameplay.cpp
+        include/music/musicplayer.cpp)
+        #include/gameplayNOMUSIC/gameplay.cpp)
+target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
 target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
