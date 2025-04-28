@@ -27,23 +27,19 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
-else()
-
-    if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
-        add_executable(Doodle
-            ${PROJECT_SOURCES}
-            include/gameplayNOMUSIC/gameplay.cpp)
-        target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-     else()
-         add_executable(Doodle
-             ${PROJECT_SOURCES}
-             include/gameplay/gameplay.cpp
-             include/music/musicplayer.cpp)
-         target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-         target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
-
-    endif()
 endif()
+if(Qt${QT_VERSION_MAJOR}_Multimedia_FOUND)
+    add_executable(Doodle
+    ${PROJECT_SOURCES}
+       include/gameplay/gameplay.cpp
+        include/music/musicplayer.cpp)
+    target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia)
+else()
+    add_executable(Doodle
+        ${PROJECT_SOURCES}
+        include/gameplayNOMUSIC/gameplay.cpp)
+endif()
+target_link_libraries(Doodle PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

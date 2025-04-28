@@ -38,6 +38,7 @@ void Score::updateRecord() {
     record = jumpscore;
 }
 void Score::clear() {
+    scoreLabel->setStyleSheet("font-size: 24px; color: white; background-color: rgba(0, 0, 0, 150); padding: 1px;");
     record = 0;
     jumpscore = 0;
 }
