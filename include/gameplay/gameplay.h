@@ -29,6 +29,7 @@ private:
     int sceneWidth = 512;
     int sceneHeight = 512;
     Score* score;
+    int highScore = 0;
     int heightForSpawn = 0;
     int Power = 20;
     int Gravity = 1;

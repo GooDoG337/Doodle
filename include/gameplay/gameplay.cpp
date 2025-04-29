@@ -119,6 +119,10 @@ void Gameplay::makeStop() {
     }
     platforms.clear();
     stop = true;
+    if(highScore < score->getscore()) {
+        highScore = score->getscore();
+        stopMenuLabel->setText("Your record: " + QString::number(highScore));
+    }
     stopMenuLabel->show();
     moveTimer->stop();
 }
@@ -135,6 +139,7 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_R:
         if (stopMenuLabel->isVisible()) {
             //            restartButton->click();
+            stopMenuLabel->setText("GAME OVER");
             stopMenuLabel->hide();
             stop = false;
             platforms.clear();

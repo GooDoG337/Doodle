@@ -25,6 +25,7 @@ private:
     QGraphicsScene* scene;
     Doodle* doodle;
     QList<Platform*> platforms;
+    int highScore = 0;
 
     int sceneWidth = 512;
     int sceneHeight = 512;

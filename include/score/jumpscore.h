@@ -10,6 +10,7 @@ public:
     void updateRecord();
     void clear();
     ~Score();
+    int getscore();
 public slots:
     void updateScoreLabel();
     void itsOver();

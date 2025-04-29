@@ -104,6 +104,10 @@ void Gameplay::makeStop() {
         platforms[i]->hide();
     }
     platforms.clear();
+    if(highScore < score->getscore()) {
+        highScore = score->getscore();
+        stopMenuLabel->setText("Your record: " + QString::number(highScore));
+    }
     stop = true;
     stopMenuLabel->show();
     moveTimer->stop();
@@ -123,6 +127,7 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
 //            restartButton->click();
             stopMenuLabel->hide();
             stop = false;
+            stopMenuLabel->setText("GAME OVER");
             platforms.clear();
             platforms.append(new Platform(256,216,scene, PlatType::Normal));
             doodle->setPos(256,128);

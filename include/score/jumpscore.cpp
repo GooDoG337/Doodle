@@ -42,3 +42,6 @@ void Score::clear() {
     record = 0;
     jumpscore = 0;
 }
+int Score::getscore() {
+    return record;
+}
