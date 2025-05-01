@@ -41,6 +41,7 @@ private:
     QPushButton *restartButton;
     QPushButton *quitButton;
     QPushButton *resumeButton;
+    void volumeChanged();
     QLabel* musicLabel;
     musicPlayer* mplayer;
     bool pause = false;

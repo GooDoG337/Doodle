@@ -33,13 +33,8 @@ Gameplay::Gameplay(QWidget* parent)
     mplayer = new musicPlayer();
     musicLabel = new QLabel("Now playing: " + mplayer->getFileName(), this);
     musicLabel->setStyleSheet("color: white;");
-    musicLabel->hide();
-    musicLabel->setGeometry(8, 16, 256, 128);
-    volume = new QSlider(this);
-    volume->setValue(0); mplayer->setVolume(0);
-    volume->setGeometry(32,64,16,64);
-    connect(volume, &QSlider::valueChanged, mplayer, &musicPlayer::setVolume);
-    connect(mplayer, &musicPlayer::currentMediaChanged, this, &Gameplay::newMediaPlaying);
+    musicLabel->setGeometry(8, -8, 256, 128);
+
     setScene(scene);
 
     pauseMenuLabel = new QLabel(this);
@@ -70,13 +65,27 @@ Gameplay::Gameplay(QWidget* parent)
     resumeButton->setGeometry(200,300,128,64);
     resumeButton->setText("Resume");
     resumeButton->hide();
+    volume = new QSlider(this);
+    volume->setValue(0); mplayer->setVolume(0);
+    volume->setGeometry(32,64,16,64);
+    connect(volume, &QSlider::valueChanged, mplayer, &musicPlayer::setVolume);
+    connect(mplayer, &musicPlayer::volumeChanged, this, &Gameplay::volumeChanged);
+    connect(mplayer, &musicPlayer::currentMediaChanged, this, &Gameplay::newMediaPlaying);
     connect(restartButton, &QPushButton::clicked, this, &Gameplay::restartGame);
     connect(quitButton, &QPushButton::clicked, this, &QApplication::quit);
     connect(resumeButton, &QPushButton::clicked, this, &Gameplay::makePause);
 }
 
 void Gameplay::newMediaPlaying() {
+    if(pause == false)
+    {
     musicLabel->setText("Now playing: " + mplayer->getFileName());
+    }
+}
+void Gameplay::volumeChanged() {
+    if(pause == true) {
+    musicLabel->setText("Volume: " + QString::number(mplayer->volume()));
+    }
 }
 void Gameplay::checkCollison() {
     QRect doodleRect(doodle->x(), doodle->y()+75, doodle->pixmap().width(), 3);  // Bottom part of the doodle
@@ -123,16 +132,17 @@ void Gameplay::newCreation() {
 void Gameplay::makePause(){
     if(!stop) {
     if(!pause) {
+            musicLabel->setText("Volume: " + QString::number(mplayer->volume()));
             resumeButton->show();
-        musicLabel->show();
         moveTimer->stop();
         pause = true;
         quitButton->show();
         pauseMenuLabel->show();
 
     } else {
+        musicLabel->setText("Now playing: " + mplayer->getFileName());
+
         resumeButton->hide();
-        musicLabel->hide();
         moveTimer->start(16);
         quitButton->hide();
         pause = false;
