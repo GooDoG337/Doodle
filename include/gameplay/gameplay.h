@@ -6,6 +6,7 @@
 #include "../music/musicplayer.h"
 #include "../background/background.h"
 #include <QPushButton>
+#include <QSlider>
 class Gameplay : public QGraphicsView {
     Q_OBJECT
 public:
@@ -25,7 +26,8 @@ private:
     Doodle* doodle;
     QList<Platform*> platforms;
     Background* bckgrnd;
-
+    QSlider* volume;
+    void restartGame();
     int sceneWidth = 512;
     int sceneHeight = 512;
     Score* score;

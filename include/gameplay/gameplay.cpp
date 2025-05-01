@@ -9,7 +9,7 @@
 #include "../score/jumpscore.h"
 #include "../music/musicplayer.h"
 #include <QRandomGenerator>
-
+#include <QApplication>
 
 Gameplay::Gameplay(QWidget* parent)
     : QGraphicsView(parent) {
@@ -35,6 +35,10 @@ Gameplay::Gameplay(QWidget* parent)
     musicLabel->setStyleSheet("color: white;");
     musicLabel->hide();
     musicLabel->setGeometry(8, 16, 256, 128);
+    volume = new QSlider(this);
+    volume->setValue(0); mplayer->setVolume(0);
+    volume->setGeometry(32,64,16,64);
+    connect(volume, &QSlider::valueChanged, mplayer, &musicPlayer::setVolume);
     connect(mplayer, &musicPlayer::currentMediaChanged, this, &Gameplay::newMediaPlaying);
     setScene(scene);
 
@@ -51,6 +55,18 @@ Gameplay::Gameplay(QWidget* parent)
     stopMenuLabel->setStyleSheet("background-color: rgba(255, 0, 0, 150); color: white; font-size: 36px;");
     stopMenuLabel->setGeometry(0, 0, width(), height());
     stopMenuLabel->hide();
+
+    restartButton = new QPushButton(this);
+    restartButton->setGeometry(200,300,128,64);
+    restartButton->setText("Restart");
+    restartButton->hide();
+
+    quitButton = new QPushButton(this);
+    quitButton->setGeometry(200,372,128,64);
+    quitButton->setText("Quit");
+    quitButton->hide();
+    connect(restartButton, &QPushButton::clicked, this, &Gameplay::restartGame);
+    connect(quitButton, &QPushButton::clicked, this, &QApplication::quit);
 }
 
 void Gameplay::newMediaPlaying() {
@@ -104,16 +120,19 @@ void Gameplay::makePause(){
         musicLabel->show();
         moveTimer->stop();
         pause = true;
+        quitButton->show();
         pauseMenuLabel->show();
     } else {
         musicLabel->hide();
         moveTimer->start(16);
+        quitButton->hide();
         pause = false;
         pauseMenuLabel->hide();
     }
     }
 }
 void Gameplay::makeStop() {
+    restartButton->show();
     for(int i = 0; i < platforms.size(); i++) {
         platforms[i]->hide();
     }
@@ -124,7 +143,26 @@ void Gameplay::makeStop() {
         stopMenuLabel->setText("Your record: " + QString::number(highScore));
     }
     stopMenuLabel->show();
+    quitButton->show();
     moveTimer->stop();
+}
+
+void Gameplay::restartGame() {
+    stopMenuLabel->setText("GAME OVER");
+    stopMenuLabel->hide();
+    stop = false;
+    platforms.clear();
+    platforms.append(new Platform(256,216,scene, PlatType::Normal));
+    doodle->setPos(256,128);
+    doodle->ghost->setPos(-doodle->pixmap().width(), -doodle->pixmap().height());
+    spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
+    score->clear();
+    Power = 20;
+    quitButton->hide();
+    score->add(63);
+    moveTimer->start(16);
+    restartButton->hide();
+    heightForSpawn = 0;
 }
 void Gameplay::keyPressEvent(QKeyEvent *event) {
     switch(event->key()) {
@@ -138,20 +176,7 @@ void Gameplay::keyPressEvent(QKeyEvent *event) {
         makePause();
     case Qt::Key_R:
         if (stopMenuLabel->isVisible()) {
-            //            restartButton->click();
-            stopMenuLabel->setText("GAME OVER");
-            stopMenuLabel->hide();
-            stop = false;
-            platforms.clear();
-            platforms.append(new Platform(256,216,scene, PlatType::Normal));
-            doodle->setPos(256,128);
-            doodle->ghost->setPos(-doodle->pixmap().width(), -doodle->pixmap().height());
-            spawnPlatformsReborn(spawnPlatformsReborn(platforms[0]->y(),-height()));
-            score->clear();
-            Power = 20;
-            score->add(63);
-            moveTimer->start(16);
-            heightForSpawn = 0;
+            restartGame();
         }
         break;
     case Qt::Key_Q:
