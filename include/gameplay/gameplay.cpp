@@ -121,7 +121,7 @@ void Gameplay::makePause(){
         moveTimer->stop();
         pause = true;
         quitButton->show();
-        pauseMenuLabel->show();
+
     } else {
         musicLabel->hide();
         moveTimer->start(16);
