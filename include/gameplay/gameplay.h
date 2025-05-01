@@ -40,6 +40,7 @@ private:
     void makeStop();  QLabel* stopMenuLabel;
     QPushButton *restartButton;
     QPushButton *quitButton;
+    QPushButton *resumeButton;
     QLabel* musicLabel;
     musicPlayer* mplayer;
     bool pause = false;

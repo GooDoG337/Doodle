@@ -65,8 +65,14 @@ Gameplay::Gameplay(QWidget* parent)
     quitButton->setGeometry(200,372,128,64);
     quitButton->setText("Quit");
     quitButton->hide();
+
+    resumeButton = new QPushButton(this);
+    resumeButton->setGeometry(200,300,128,64);
+    resumeButton->setText("Resume");
+    resumeButton->hide();
     connect(restartButton, &QPushButton::clicked, this, &Gameplay::restartGame);
     connect(quitButton, &QPushButton::clicked, this, &QApplication::quit);
+    connect(resumeButton, &QPushButton::clicked, this, &Gameplay::makePause);
 }
 
 void Gameplay::newMediaPlaying() {
@@ -117,12 +123,15 @@ void Gameplay::newCreation() {
 void Gameplay::makePause(){
     if(!stop) {
     if(!pause) {
+            resumeButton->show();
         musicLabel->show();
         moveTimer->stop();
         pause = true;
         quitButton->show();
+        pauseMenuLabel->show();
 
     } else {
+        resumeButton->hide();
         musicLabel->hide();
         moveTimer->start(16);
         quitButton->hide();
